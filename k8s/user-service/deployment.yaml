@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: spring-poc
+  labels:
+    app: user-service
+    version: v1
+spec:
+  replicas: 2                         # Initial replica count
+  selector:
+    matchLabels:
+      app: user-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1                     # Allow 1 extra pod during update
+      maxUnavailable: 0               # Zero downtime rolling update
+  template:
+    metadata:
+      labels:
+        app: user-service
+        version: v1
+    spec:
+      containers:
+        - name: user-service
+          image: poc/user-service:latest
+          imagePullPolicy: Never       # Use local image (Docker Desktop K8s)
+          ports:
+            - containerPort: 8081
+              name: http
+
+          # ---- Environment Variables ----
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "default"
+            - name: JAVA_OPTS
+              value: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
+
+          # ---- Resource Limits (critical for HPA) ----
+          resources:
+            requests:
+              cpu: "250m"             # 0.25 CPU core - HPA baseline
+              memory: "256Mi"
+            limits:
+              cpu: "500m"             # 0.5 CPU core
+              memory: "512Mi"
+
+          # ---- Liveness Probe ----
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8081
+            initialDelaySeconds: 45
+            periodSeconds: 15
+            failureThreshold: 3
+
+          # ---- Readiness Probe ----
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+
+          # ---- Startup Probe (gives app time to boot) ----
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            failureThreshold: 20
+            periodSeconds: 5
+
+      terminationGracePeriodSeconds: 30

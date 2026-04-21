@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: spring-poc
+  labels:
+    app: user-service
+spec:
+  selector:
+    app: user-service
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8081
+      targetPort: 8081
+      nodePort: 30081        # Accessible at localhost:30081 on Docker Desktop
+  type: NodePort             # Use NodePort for Docker Desktop local access
