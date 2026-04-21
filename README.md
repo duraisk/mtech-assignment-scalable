@@ -390,7 +390,7 @@ kubectl top pods -n spring-poc
 **Create User** — `POST /api/users`
 ```json
 {
-  "name": "Durai Kumar",
+  "name": "DuraiArasan Subramanian",
   "email": "durai@valignit.com",
   "role": "ADMIN"
 }
