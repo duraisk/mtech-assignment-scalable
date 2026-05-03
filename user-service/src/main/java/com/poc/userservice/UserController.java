@@ -27,9 +27,8 @@ public class UserController {
 
     public UserController() {
         // Seed data
-        users.put(1L, new User(1L, "Durai SK", "durai@valignit.com", "ADMIN"));
-        users.put(2L, new User(2L, "Fahath", "fahath@valignit.com", "USER"));
-        users.put(3L, new User(3L, "Seema", "seema@valignit.com", "USER"));
+        users.put(1L, new User(1L, "Durai SK", "2024mt03574@wilp.bits-pilani.ac.in", "ADMIN"));
+        users.put(2L, new User(2L, "RACHIGAA R", "2024mt03521@wilp.bits-pilani.ac.in", "USER"));
         counter.set(3L);
     }
 
